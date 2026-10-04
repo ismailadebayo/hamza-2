@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Hamza — Interactive Lesson</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --green:#137a54; --green-d:#0d5a3d; --green-l:#e4f4ec;
+    --blue:#1668a8;  --blue-d:#0f4e80; --blue-l:#e3f0fa;
+    --amber:#b7770a; --amber-l:#fbf0da;
+    --rose:#c0396b;  --rose-d:#93264f; --rose-l:#fbe6ee;
+    --maroon:#7a2048; --maroon-d:#5c1836; --maroon-l:#f3e6ec;
+    --gold:#c9a227;
+    --ink:#233436; --muted:#5d7175;
+    --bg:#f6f4ec; --card:#ffffff; --line:#e5e2d6;
+    --shadow:0 6px 22px rgba(30,50,45,.10);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    font-family:'Nunito',system-ui,sans-serif;
+    background:
+      radial-gradient(1200px 500px at 100% -10%, #f7e9ee 0, transparent 60%),
+      radial-gradient(900px 500px at -10% 110%, #f7efe1 0, transparent 55%),
+      var(--bg);
+    color:var(--ink); line-height:1.55; min-height:100vh; padding:22px 16px 60px;
+  }
+  .ar{font-family:'Amiri',serif; direction:rtl; unicode-bidi:isolate;}
+  .wrap{max-width:940px; margin:0 auto;}
+
+  header.top{display:flex; align-items:center; gap:14px; margin-bottom:18px;}
+  .badge{flex:0 0 auto; width:46px; height:46px; border-radius:13px;
+    background:linear-gradient(145deg,var(--maroon),var(--maroon-d));
+    color:#fff; display:grid; place-items:center; font-weight:800; font-size:22px; box-shadow:var(--shadow);}
+  header.top h1{font-size:19px; font-weight:800; line-height:1.2}
+  header.top p{font-size:14px; color:var(--muted)}
+  .progress{height:8px; background:#e7e3d5; border-radius:99px; overflow:hidden; margin:6px 0 20px}
+  .progress > i{display:block; height:100%; width:0;
+    background:linear-gradient(90deg,var(--gold),var(--maroon)); border-radius:99px; transition:width .4s ease}
+
+  .dots{display:flex; flex-wrap:wrap; gap:7px; justify-content:center; margin-bottom:18px}
+  .dots button{border:none; cursor:pointer; font:inherit; font-size:12px; font-weight:700;
+    padding:5px 11px; border-radius:99px; background:#eae6d8; color:var(--muted); transition:.2s;}
+  .dots button.active{background:var(--maroon); color:#fff; box-shadow:var(--shadow)}
+  .dots button:hover{background:#ded9c8}
+  .dots button.active:hover{background:var(--maroon)}
+
+  .slide{display:none; animation:pop .35s ease}
+  .slide.show{display:block}
+  @keyframes pop{from{opacity:0; transform:translateY(10px)}to{opacity:1; transform:none}}
+  .panel{background:var(--card); border:1px solid var(--line); border-radius:20px; box-shadow:var(--shadow); padding:26px 24px}
+  .eyebrow{display:inline-block; font-size:12px; font-weight:800; letter-spacing:.06em; text-transform:uppercase;
+    color:var(--maroon-d); background:var(--maroon-l); padding:5px 12px; border-radius:99px; margin-bottom:12px}
+  h2.title{font-size:24px; font-weight:800; margin-bottom:4px}
+  h2.title .ar{font-size:30px; display:block; margin-bottom:2px}
+  .lead{color:var(--muted); font-size:15px; margin-bottom:18px}
+
+  /* intro */
+  .hero{text-align:center; padding:34px 20px}
+  .hero .big{font-size:52px; color:var(--maroon-d); font-weight:700; margin-bottom:8px}
+  .hero .sub{font-size:20px; color:var(--amber); font-weight:800; margin-bottom:16px}
+  .mini{padding:10px 15px; border-radius:13px; font-weight:800; font-size:13.5px; display:inline-block}
+  .chips{display:flex; gap:9px; justify-content:center; flex-wrap:wrap; margin-top:10px}
+
+  /* compare cards */
+  .compare{display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:16px}
+  @media(max-width:620px){.compare{grid-template-columns:1fr}}
+  .ccard{border-radius:16px; padding:18px; text-align:center; border:1.5px solid}
+  .ccard .w{font-family:'Amiri',serif; font-size:34px; font-weight:700}
+  .ccard .en{font-weight:800; font-size:15px; margin-top:6px}
+  .ccard .desc{font-size:12.5px; color:var(--muted); margin-top:8px; line-height:1.5}
+  .cc-blue{border-color:var(--blue-l); background:var(--blue-l)} .cc-blue .w,.cc-blue .en{color:var(--blue-d)}
+  .cc-maroon{border-color:var(--maroon-l); background:var(--maroon-l)} .cc-maroon .w,.cc-maroon .en{color:var(--maroon-d)}
+  .vs-example{background:#fff; border:1px solid var(--line); border-radius:14px; padding:14px 16px; text-align:center}
+  .vs-example .line{font-family:'Amiri',serif; font-size:22px; font-weight:700; margin-bottom:4px}
+  .vs-example small{color:var(--muted); font-style:italic; font-size:12px}
+
+  /* grids */
+  .grid{display:grid; gap:11px}
+  .g5{grid-template-columns:repeat(5,1fr)}
+  .g4{grid-template-columns:repeat(4,1fr)}
+  .g3{grid-template-columns:repeat(3,1fr)}
+  @media(max-width:720px){.g5,.g4,.g3{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:460px){.g5,.g4,.g3{grid-template-columns:1fr}}
+  .wcard{border:1.5px solid var(--line); background:#fff; border-radius:14px; padding:13px 8px; text-align:center}
+  .wcard .w{font-family:'Amiri',serif; font-size:21px; font-weight:700; color:var(--ink)}
+  .wcard .gloss{font-size:11px; color:var(--muted); margin-top:4px}
+  .wcard.blue{border-color:var(--blue-l)} .wcard.blue .w{color:var(--blue-d)}
+  .wcard.maroon{border-color:var(--maroon-l)} .wcard.maroon .w{color:var(--maroon-d)}
+
+  /* category block */
+  .catblock{background:#fff; border:1px solid var(--line); border-radius:14px; padding:14px 16px; margin-bottom:12px}
+  .catblock .cap{font-weight:800; font-size:13.5px; margin-bottom:10px; color:var(--blue-d)}
+  .catblock .cap .ar{font-size:16px}
+
+  /* recitation slide */
+  .ayah{text-align:center; background:var(--green-l); border:1px solid #cfe6da; border-radius:16px; padding:22px 16px; margin-bottom:14px}
+  .ayah .phrase{font-family:'Amiri',serif; font-size:30px; font-weight:700; color:var(--green-d); line-height:1.9}
+  .ayah small{display:block; color:var(--muted); font-style:italic; margin-top:8px; font-size:12.5px}
+  .liaison{display:flex; align-items:center; justify-content:center; gap:8px; flex-wrap:wrap; margin-top:14px}
+  .liaison .part{font-family:'Amiri',serif; font-size:20px; padding:8px 12px; border-radius:10px; background:#fff; border:1px solid var(--line)}
+  .liaison .silent{opacity:.35; text-decoration:line-through; text-decoration-color:var(--rose)}
+  .liaison .plus{color:var(--muted); font-weight:800}
+
+  /* seat gallery reveal */
+  .pcard{border:1.5px solid var(--line); border-radius:16px; background:#fff; padding:15px; text-align:center; cursor:pointer; transition:.2s}
+  .pcard:hover{border-color:var(--maroon)}
+  .pcard .w{font-family:'Amiri',serif; font-size:26px; font-weight:700; color:var(--ink)}
+  .pcard .rev{max-height:0; opacity:0; overflow:hidden; transition:.35s}
+  .pcard.open .rev{max-height:80px; opacity:1; margin-top:8px}
+  .pcard .rev .seat{font-size:11.5px; font-weight:800; color:var(--maroon-d); text-transform:uppercase; letter-spacing:.03em}
+  .pcard .rev small{display:block; color:var(--muted); font-style:italic; font-size:11px; margin-top:3px}
+  .pcard .tap{font-size:10.5px; color:var(--muted); font-weight:700; margin-top:8px}
+  .pcard.open .tap{display:none}
+
+  /* recap comparison table */
+  table.recap{width:100%; border-collapse:separate; border-spacing:0 10px}
+  table.recap td{background:#fff; padding:12px 14px; vertical-align:top; font-size:13.5px}
+  table.recap td:first-child{border-radius:12px 0 0 12px; font-weight:800; width:120px}
+  table.recap td:last-child{border-radius:0 12px 12px 0}
+  table.recap tr td{box-shadow:0 1px 0 var(--line)}
+  table.recap .w{font-family:'Amiri',serif; font-size:19px; font-weight:700}
+  .rt-blue td:first-child{border-left:4px solid var(--blue); color:var(--blue-d)} .rt-blue .w{color:var(--blue-d)}
+  .rt-maroon td:first-child{border-left:4px solid var(--maroon); color:var(--maroon-d)} .rt-maroon .w{color:var(--maroon-d)}
+
+  .note{margin-top:10px; background:#fffbf0; border:1px solid #efe6c4; border-radius:14px; padding:13px 15px; font-size:13.5px; display:flex; gap:10px}
+  .note .ic{flex:0 0 auto; width:26px; height:26px; border-radius:8px; background:var(--gold); color:#fff; display:grid; place-items:center; font-weight:800}
+
+  /* quiz */
+  .quiz .q-word{text-align:center; font-family:'Amiri',serif; font-size:44px; font-weight:700; margin:10px 0}
+  .q-count{text-align:center; color:var(--muted); font-size:13px; font-weight:700; margin-bottom:14px}
+  .opts{display:grid; grid-template-columns:repeat(2,1fr); gap:12px}
+  @media(max-width:480px){.opts{grid-template-columns:1fr}}
+  .opt{border:2px solid var(--line); background:#fff; border-radius:14px; padding:16px 10px; cursor:pointer;
+    font:inherit; font-weight:800; font-size:15px; transition:.15s; text-align:center}
+  .opt:hover{border-color:var(--maroon); background:#fdf6f9}
+  .opt:disabled{cursor:default}
+  .opt.correct{background:var(--green); color:#fff; border-color:var(--green)}
+  .opt.wrong{background:var(--rose-l); border-color:var(--rose); color:var(--rose)}
+  .fb{margin-top:14px; border-radius:14px; padding:13px 15px; font-size:14px; font-weight:600; display:none}
+  .fb.show{display:block; animation:pop .3s}
+  .fb.ok{background:var(--green-l); color:var(--green-d)}
+  .fb.no{background:var(--rose-l); color:var(--rose)}
+  .fb .ar{font-size:17px}
+  .scoreline{text-align:center; margin-top:16px; font-weight:800; color:var(--green-d)}
+
+  /* answer key */
+  .keyrow{display:flex; gap:14px; align-items:flex-start; background:#fff; border:1px solid var(--line);
+    border-radius:14px; padding:14px 16px; margin-bottom:10px}
+  .keyrow .qn{flex:0 0 auto; width:30px; height:30px; border-radius:50%; background:var(--maroon-l);
+    color:var(--maroon-d); font-weight:800; display:grid; place-items:center; font-size:13px}
+  .keyrow .body{flex:1}
+  .keyrow .phrase{font-family:'Amiri',serif; font-size:22px; font-weight:700; color:var(--ink)}
+  .keyrow .verdict{display:inline-block; font-size:11.5px; font-weight:800; text-transform:uppercase;
+    letter-spacing:.03em; padding:3px 10px; border-radius:99px; margin-left:10px; vertical-align:middle}
+  .keyrow .why{font-size:13px; color:var(--muted); margin-top:6px}
+
+  .nav{display:flex; justify-content:space-between; align-items:center; gap:12px; margin-top:20px}
+  .btn{border:none; cursor:pointer; font:inherit; font-weight:800; font-size:15px; padding:12px 22px; border-radius:13px; transition:.2s}
+  .btn.prev{background:#eae6d8; color:var(--ink)} .btn.prev:hover{background:#ded9c8}
+  .btn.next{background:linear-gradient(145deg,var(--maroon),var(--maroon-d)); color:#fff; box-shadow:var(--shadow)}
+  .btn.next:hover{filter:brightness(1.12)}
+  .btn:disabled{opacity:.4; cursor:default}
+  .kbd-hint{text-align:center; color:var(--muted); font-size:12px; margin-top:14px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="badge">ء</div>
+    <div>
+      <h1>The Hamza</h1>
+      <p class="ar" style="font-size:15px">الهَمْزَة (أ / ا)</p>
+    </div>
+  </header>
+  <div class="progress"><i id="bar"></i></div>
+  <div class="dots" id="dots"></div>
+
+  <!-- 0 INTRO -->
+  <section class="slide show">
+    <div class="panel hero">
+      <div class="ar big">الهَمْزَةُ (أ / ا)</div>
+      <div class="sub">Two Hamzas That Look Almost Alike</div>
+      <p class="lead" style="max-width:600px;margin:0 auto 16px">
+        Arabic has two kinds of hamza. One is written plainly and <b>disappears</b> in speech.
+        The other always carries the hamza mark and is <b>always heard</b>. Mixing them up
+        changes how a word is read aloud. Tap through to tell them apart.
+      </p>
+      <div class="chips">
+        <span class="mini" style="background:var(--blue-l);color:var(--blue-d)">همزة الوصل — silent</span>
+        <span class="mini" style="background:var(--maroon-l);color:var(--maroon-d)">همزة القطع — always heard</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- 1 THE DIFFERENCE -->
+  <section class="slide">
+    <div class="panel">
+      <span class="eyebrow">The big picture</span>
+      <h2 class="title"><span class="ar">هَمْزَةُ الوَصْل وَهَمْزَةُ القَطْع</span>Two hamzas, two behaviors</h2>
+      <div class="compare">
+        <div class="ccard cc-blue">
+          <div class="w">ا</div>
+          <div class="en">Hamzat al-Waṣl</div>
+          <div class="desc">“Connecting hamza.” Written as a <b>plain alif</b>, no hamza mark.
+            Only pronounced at the very start of speech — it goes silent whenever the word
+            before it ends in a vowel.</div>
+        </div>
+        <div class="ccard cc-maroon">
+          <div class="w">أ / إ</div>
+          <div class="en">Hamzat al-Qaṭ‘</div>
+          <div class="desc">“Cutting hamza.” Always written <b>with</b> the hamza mark — أ for
+            fatḥa/ḍamma, إ for kasra. Always pronounced, no matter what comes before it.</div>
+        </div>
+      </div>
+      <p class="lead" style="margin-bottom:8px"><b>Hear the difference:</b></p>
+      <div class="vs-example">
+        <div class="line">مِنِ اسْمٍ <span style="color:var(--muted);font-size:16px">→ pronounced</span> مِنِسْمٍ</div>
+        <small>the alif of اسم vanishes into the kasra before it — hamzat al-waṣl</small>
+      </div>
+      <div class="vs-example" style="margin-top:10px">
+        <div class="line">مِنْ أَخٍ <span style="color:var(--muted);font-size:16px">→ pronounced</span> مِنْ أَخٍ</div>
+        <small>the hamza of أخ stays fully voiced — hamzat al-qaṭ‘</small>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2 WASL - NOUNS -->
+  <section class="slide">
+    <div class="panel">
+      <span class="eyebrow" style="color:var(--blue-d);background:var(--blue-l)">Hamzat al-Waṣl · Nouns</span>
+      <h2 class="title"><span class="ar">هَمْزَةُ الوَصْلِ فِي الأَسْمَاء</span>A short list to memorize</h2>
+      <p class="lead">A handful of specific nouns always take hamzat al-waṣl — there's no rule to derive it from, just memorize the list.</p>
+      <div class="grid g5">
+        <div class="wcard blue"><div class="w">اسْم</div><div class="gloss">a name</div></div>
+        <div class="wcard blue"><div class="w">اسْت</div><div class="gloss">buttock (dual: اسْتَان)</div></div>
+        <div class="wcard blue"><div class="w">ابْن</div><div class="gloss">a son</div></div>
+        <div class="wcard blue"><div class="w">ابْنَة</div><div class="gloss">a daughter</div></div>
+        <div class="wcard blue"><div class="w">ابْنُم</div><div class="gloss">a son (variant)</div></div>
+        <div class="wcard blue"><div class="w">امْرُؤ</div><div class="gloss">a man</div></div>
+        <div class="wcard blue"><div class="w">امْرَأَة</div><div class="gloss">a woman</div></div>
+        <div class="wcard blue"><div class="w">أَيْمُنُ اللهِ</div><div class="gloss">by Allah's oath</div></div>
+        <div class="wcard blue"><div class="w">اثْنَان</div><div class="gloss">two (masc.)</div></div>
+        <div class="wcard blue"><div class="w">اثْنَتَان</div><div class="gloss">two (fem.)</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3 WASL - AL & VERBS -->
+  <section class="slide">
+    <div class="panel">
+      <span class="eyebrow" style="color:var(--blue-d);background:var(--blue-l)">Hamzat al-Waṣl · “Al” &amp; Verbs</span>
+      <h2 class="title" style="font-size:22px">Two more places it shows up</h2>
+      <div class="catblock">
+        <div class="cap">The definite article <span class="ar">(الـ)</span></div>
+        <div class="grid g3">
+          <div class="wcard blue"><div class="w">الشَّمْس</div><div class="gloss">the sun</div></div>
+        </div>
+      </div>
+      <div class="catblock">
+        <div class="cap">Imperative verbs — Form I <span class="ar">(فعل الأمر)</span></div>
+        <div class="grid g3">
+          <div class="wcard blue"><div class="w">اجْلِسْ</div><div class="gloss">sit!</div></div>
+          <div class="wcard blue"><div class="w">اكْتُبْ</div><div class="gloss">write!</div></div>
+        </div>
+      </div>
+      <div class="catblock" style="margin-bottom:0">
+        <div class="cap">Past tense &amp; imperative of longer verb forms</div>
+        <div class="grid g3">
+          <div class="wcard blue"><div class="w">انْطَلَقَ</div><div class="gloss">he set off</div></div>
+          <div class="wcard blue"><div class="w">اسْتَغْفَرَ</div><div class="gloss">he sought forgiveness</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4 WASL IN RECITATION -->
+  <section class="slide">
+    <div class="panel">
+      <span class="eyebrow" style="color:var(--green-d);background:var(--green-l)">Why it matters</span>
+      <h2 class="title" style="font-size:22px">Watch it disappear in recitation</h2>
+      <p class="lead">This isn't just theory — it changes how a real ayah is read aloud.</p>
+      <div class="ayah">
+        <div class="phrase">سَبِّحِ اسْمَ رَبِّكَ الأَعْلَى</div>
+        <small>“Glorify the name of your Lord, the Most High” — Sūrah al-A‘lā, 87:1</small>
+      </div>
+      <p class="lead" style="margin-bottom:6px">Written separately, the alif of <span class="ar" style="font-size:18px">اسْمَ</span> is there.
+        But joined in speech, it vanishes into the kasra before it:</p>
+      <div class="liaison">
+        <span class="part">سَبِّحِ</span><span class="plus">+</span>
+        <span class="part"><span class="silent">ا</span>سْمَ</span><span class="plus">=</span>
+        <span class="part" style="color:var(--green-d);font-weight:700">سَبِّحِسْمَ</span>
+      </div>
+      <div class="note"><span class="ic">i</span><div>The definite article الأعلى keeps its own hamzat al-waṣl too, but it's swallowed the same way after رَبِّكَ.</div></div>
+    </div>
+  </section>
+
+  <!-- 5 QAT BASICS -->
+  <section class="slide">
+    <div class="panel">
+      <span class="eyebrow" style="color:var(--maroon-d);background:var(--maroon-l)">Hamzat al-Qaṭ‘ · The Basics</span>
+      <h2 class="title"><span class="ar">هَمْزَةُ القَطْع</span>Always written, always heard</h2>
+      <div class="rule" style="background:var(--maroon-l);border-radius:14px;padding:14px 16px;margin-bottom:16px;font-size:14.5px">
+        <b style="display:block;font-size:11.5px;text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px;color:var(--maroon-d)">The rule</b>
+        Every noun, verb, and particle that starts with a hamza carries hamzat al-qaṭ‘ <b>unless</b>
+        it's on the short list you just saw. Write أ for fatḥa/ḍamma, إ for kasra — and pronounce it
+        every single time.
+      </div>
+      <div class="grid g3">
+        <div class="wcard maroon"><div class="w">أَخٌ</div><div class="gloss">a brother</div></div>
+        <div class="wcard maroon"><div class="w">أُمٌّ</div><div class="gloss">a mother</div></div>
+        <div class="wcard maroon"><div class="w">إِجْلَالٌ</div><div class="gloss">glorification</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6 QAT IN CONTEXT -->
+  <section class="slide">
+    <div class="panel">
+      <span class="eyebrow" style="color:var(--maroon-d);background:var(--maroon-l)">Hamzat al-Qaṭ‘ · In Context</span>
+      <h2 class="title" style="font-size:22px">Even a tiny prefix doesn't silence it</h2>
+      <p class="lead">Attach لَـ, وَـ, سَـ, or الـ (as a true qaṭ‘ noun) in front — the hamza is still fully voiced.</p>
+      <div class="grid g3">
+        <div class="wcard maroon"><div class="w">الأُمُّ</div><div class="gloss">the mother</div></div>
+        <div class="wcard maroon"><div class="w">لَأُكْرِمَنَّ</div><div class="gloss">I will surely honor</div></div>
+        <div class="wcard maroon"><div class="w">لِأَنَّكَ</div><div class="gloss">because you</div></div>
+        <div class="wcard maroon"><div class="w">لَزَيْدٌ</div><div class="gloss">surely, Zayd</div></div>
+        <div class="wcard maroon"><div class="w">سَأَفْعَلُ</div><div class="gloss">I will do</div></div>
+        <div class="wcard maroon"><div class="w">وَأُمٌّ</div><div class="gloss">and a mother</div></div>
+      </div>
+      <div class="note"><span class="ic">i</span><div>Compare this to <span class="ar" style="font-size:17px">سَأَفْعَلُ</span> — the سَـ is just a prefix meaning “will”; the hamza belongs to فَعَلَ itself, so it's qaṭ‘ and stays fully pronounced.</div></div>
+    </div>
+  </section>
+
+  <!-- 7 HAMZA'S SEAT -->
+  <section class="slide">
+    <div class="panel">
+      <span class="eyebrow">One more detail</span>
+      <h2 class="title" style="font-size:22px">In the middle of a word, hamza needs a “seat”</h2>
+      <p class="lead">A hamza inside or at the end of a word is written on an alif, a wāw, a yā, or all
+        alone — chosen by whichever neighboring vowel is “stronger.” Tap each card to see its seat.</p>
+      <div class="grid g4">
+        <div class="pcard" onclick="this.classList.toggle('open')">
+          <div class="w">مِلْءٌ</div>
+          <div class="rev"><div class="seat">alone</div><small>a fill / amount</small></div>
+          <div class="tap">tap ▸</div></div>
+        <div class="pcard" onclick="this.classList.toggle('open')">
+          <div class="w">سُوءٌ</div>
+          <div class="rev"><div class="seat">alone</div><small>harm / evil</small></div>
+          <div class="tap">tap ▸</div></div>
+        <div class="pcard" onclick="this.classList.toggle('open')">
+          <div class="w">تَبَوَّأَ</div>
+          <div class="rev"><div class="seat">on alif</div><small>he settled</small></div>
+          <div class="tap">tap ▸</div></div>
+        <div class="pcard" onclick="this.classList.toggle('open')">
+          <div class="w">تَبَوُّءُ</div>
+          <div class="rev"><div class="seat">alone</div><small>settling (verbal noun)</small></div>
+          <div class="tap">tap ▸</div></div>
+        <div class="pcard" onclick="this.classList.toggle('open')">
+          <div class="w">لُؤْلُؤُ</div>
+          <div class="rev"><div class="seat">on wāw</div><small>pearl</small></div>
+          <div class="tap">tap ▸</div></div>
+        <div class="pcard" onclick="this.classList.toggle('open')">
+          <div class="w">يَكْلَؤُكُمْ</div>
+          <div class="rev"><div class="seat">on wāw</div><small>he protects you</small></div>
+          <div class="tap">tap ▸</div></div>
+        <div class="pcard" onclick="this.classList.toggle('open')">
+          <div class="w">بَئِيسٌ</div>
+          <div class="rev"><div class="seat">on yā</div><small>severe, harsh</small></div>
+          <div class="tap">tap ▸</div></div>
+        <div class="pcard" onclick="this.classList.toggle('open')">
+          <div class="w">جُزْءَانِ</div>
+          <div class="rev"><div class="seat">alone</div><small>two parts</small></div>
+          <div class="tap">tap ▸</div></div>
+      </div>
+      <div class="note"><span class="ic">i</span><div>Rule of thumb: <b>kasra</b> wins over <b>ḍamma</b>, which wins over <b>fatḥa</b>, which wins over <b>sukūn</b>. The stronger neighboring vowel decides the seat.</div></div>
+    </div>
+  </section>
+
+  <!-- 8 RECAP -->
+  <section class="slide">
+    <div class="panel">
+      <span class="eyebrow" style="color:var(--gold);background:#faf3dc">Recap</span>
+      <h2 class="title" style="font-size:22px">Waṣl vs. Qaṭ‘, side by side</h2>
+      <table class="recap">
+        <tr class="rt-blue"><td>Writing</td><td>Plain alif <span class="w ar">ا</span> — no hamza mark</td></tr>
+        <tr class="rt-maroon"><td>Writing</td><td>Always marked: <span class="w ar">أ</span> or <span class="w ar">إ</span></td></tr>
+        <tr class="rt-blue"><td>Sound</td><td>Pronounced only at the very start of speech; silent when joined to what comes before</td></tr>
+        <tr class="rt-maroon"><td>Sound</td><td>Always pronounced, everywhere in the sentence</td></tr>
+        <tr class="rt-blue"><td>Found in</td><td>The 10 special nouns, الـ, imperative verbs, and Form VII+ verbs</td></tr>
+        <tr class="rt-maroon"><td>Found in</td><td>Everything else that begins with a hamza</td></tr>
+      </table>
+    </div>
+  </section>
+
+  <!-- 9 QUIZ -->
+  <section class="slide">
+    <div class="panel quiz">
+      <span class="eyebrow" style="color:var(--gold);background:#faf3dc">Quick Check</span>
+      <h2 class="title" style="font-size:22px">Waṣl or Qaṭ‘?</h2>
+      <p class="lead">Read the word and choose which kind of hamza it has.</p>
+      <div class="q-count" id="qcount"></div>
+      <div class="q-word ar" id="qword"></div>
+      <div class="opts" id="qopts"></div>
+      <div class="fb" id="qfb"></div>
+      <div class="scoreline" id="qscore"></div>
+    </div>
+  </section>
+
+  <!-- 10 ANSWER KEY -->
+  <section class="slide">
+    <div class="panel">
+      <span class="eyebrow" style="color:var(--gold);background:#faf3dc">Reference</span>
+      <h2 class="title" style="font-size:22px">Quiz — questions &amp; answers</h2>
+      <p class="lead">All eight words from the quiz, with the answer and explanation, for review or printing.</p>
+      <div id="keyList"></div>
+    </div>
+  </section>
+
+  <!-- 11 DONE -->
+  <section class="slide">
+    <div class="panel hero">
+      <div style="font-size:52px">🎉</div>
+      <div class="ar big" style="font-size:38px">أَحْسَنْتَ!</div>
+      <div class="sub">You can tell the two hamzas apart</div>
+      <p class="lead" style="max-width:600px;margin:0 auto">One disappears into the words around it.
+        The other never does — no matter how small the prefix in front of it.</p>
+      <div class="chips" style="margin-top:6px">
+        <span class="mini" style="background:var(--blue-l);color:var(--blue-d)">همزة الوصل</span>
+        <span class="mini" style="background:var(--maroon-l);color:var(--maroon-d)">همزة القطع</span>
+      </div>
+      <div style="margin-top:22px"><button class="btn next" onclick="goTo(0)">↺ Start over</button></div>
+    </div>
+  </section>
+
+  <div class="nav">
+    <button class="btn prev" id="prevBtn" onclick="move(-1)">‹ Back</button>
+    <button class="btn next" id="nextBtn" onclick="move(1)">Next ›</button>
+  </div>
+  <p class="kbd-hint">Tip: use the ← and → arrow keys to move between steps</p>
+</div>
+
+<script>
+  const slides=[...document.querySelectorAll('.slide')];
+  const labels=['Intro','The Difference','Waṣl · Nouns','Waṣl · Al & Verbs','In Recitation','Qaṭ\u2018 Basics','Qaṭ\u2018 in Context','The Seat','Recap','Quiz','Answer Key','Done'];
+  let cur=0;
+  const dotWrap=document.getElementById('dots');
+  labels.forEach((l,i)=>{const b=document.createElement('button');b.textContent=l;b.onclick=()=>goTo(i);dotWrap.appendChild(b);});
+  const dots=[...dotWrap.children];
+  function render(){
+    slides.forEach((s,i)=>s.classList.toggle('show',i===cur));
+    dots.forEach((d,i)=>d.classList.toggle('active',i===cur));
+    document.getElementById('bar').style.width=(cur/(slides.length-1)*100)+'%';
+    document.getElementById('prevBtn').disabled=cur===0;
+    document.getElementById('nextBtn').style.visibility = cur===slides.length-1?'hidden':'visible';
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+  function move(d){ goTo(Math.min(slides.length-1,Math.max(0,cur+d))); }
+  function goTo(i){ cur=i; render(); }
+  document.addEventListener('keydown',e=>{ if(e.key==='ArrowRight')move(1); if(e.key==='ArrowLeft')move(-1); });
+
+  /* QUIZ: Wasl vs Qat' */
+  const CATS=['Hamzat al-Wa\u1e63l','Hamzat al-Qa\u1e6d\u2018'];
+  const Q=[
+    {w:'اسْمٌ', a:'Hamzat al-Wa\u1e63l', why:'One of the ten memorized nouns that take waṣl.'},
+    {w:'أَخٌ', a:'Hamzat al-Qa\u1e6d\u2018', why:'Not on the special list, so it defaults to qaṭ‘ — always pronounced.'},
+    {w:'اجْلِسْ', a:'Hamzat al-Wa\u1e63l', why:'A Form I imperative verb — these always take waṣl.'},
+    {w:'إِجْلَالٌ', a:'Hamzat al-Qa\u1e6d\u2018', why:'A regular noun starting with hamza — written and heard as qaṭ‘.'},
+    {w:'اسْتَغْفَرَ', a:'Hamzat al-Wa\u1e63l', why:'Past tense of a longer verb form (Form X) — these take waṣl.'},
+    {w:'سَأَفْعَلُ', a:'Hamzat al-Qa\u1e6d\u2018', why:'The سَـ is just a prefix; the verb\u2019s own hamza stays qaṭ‘ and fully voiced.'},
+    {w:'امْرَأَةٌ', a:'Hamzat al-Wa\u1e63l', why:'Another of the ten memorized nouns that take waṣl.'},
+    {w:'أُمٌّ', a:'Hamzat al-Qa\u1e6d\u2018', why:'Not on the special list — a regular qaṭ‘ hamza, always pronounced.'},
+  ];
+  let qi=0, qs=0;
+  function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+  function loadQ(){
+    const q=Q[qi];
+    document.getElementById('qword').textContent=q.w;
+    document.getElementById('qcount').textContent=`Question ${qi+1} of ${Q.length}`;
+    const opts=shuffle(CATS);
+    const wrap=document.getElementById('qopts'); wrap.innerHTML='';
+    opts.forEach(o=>{
+      const b=document.createElement('button'); b.className='opt'; b.textContent=o;
+      b.onclick=()=>answer(b,o); wrap.appendChild(b);
+    });
+    document.getElementById('qfb').className='fb';
+  }
+  function answer(btn,choice){
+    const q=Q[qi];
+    [...document.querySelectorAll('#qopts .opt')].forEach(o=>{
+      o.disabled=true; if(o.textContent===q.a)o.classList.add('correct');
+    });
+    const fb=document.getElementById('qfb');
+    if(choice===q.a){qs++; fb.className='fb ok show'; fb.innerHTML='✅ Correct! '+q.why;}
+    else{btn.classList.add('wrong'); fb.className='fb no show'; fb.innerHTML='Not quite. '+q.why;}
+    qi++;
+    if(qi<Q.length){ setTimeout(loadQ,1600); }
+    else{ setTimeout(()=>{document.getElementById('qscore').textContent=`Score: ${qs} / ${Q.length}`;},1350); }
+  }
+
+  function buildKey(){
+    const wrap=document.getElementById('keyList');
+    Q.forEach((q,i)=>{
+      const row=document.createElement('div'); row.className='keyrow';
+      const isWasl = q.a===CATS[0];
+      const col = isWasl ? ['var(--blue-l)','var(--blue-d)'] : ['var(--maroon-l)','var(--maroon-d)'];
+      row.innerHTML = `
+        <div class="qn">${i+1}</div>
+        <div class="body">
+          <span class="phrase ar">${q.w}</span>
+          <span class="verdict" style="background:${col[0]};color:${col[1]}">${q.a}</span>
+          <div class="why">${q.why}</div>
+        </div>`;
+      wrap.appendChild(row);
+    });
+  }
+
+  loadQ(); buildKey(); render();
+</script>
+</body>
+</html>
